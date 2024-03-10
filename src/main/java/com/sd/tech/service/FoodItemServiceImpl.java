@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import com.sd.tech.dto.FoodItemCataloguePage;
 import com.sd.tech.dto.Restaurant;
 import com.sd.tech.entity.FoodItem;
+import com.sd.tech.feign.client.FeignClientServer;
 import com.sd.tech.repo.FoodItemRepo;
 
 @Service
@@ -20,6 +21,12 @@ public class FoodItemServiceImpl implements FoodItemService {
 	
 	@Autowired
 	private RestTemplate restTemplate; 
+	
+	@Autowired
+	FeignClientServer feignClientServer; 
+	
+	@Autowired
+	CommonService commonService;
 
 	@Override
 	public ResponseEntity<FoodItem> saveItem(FoodItem foodItem) {
@@ -51,7 +58,10 @@ public class FoodItemServiceImpl implements FoodItemService {
 	@Override
 	public FoodItemCataloguePage fetchRestaurantAndFoodItemsById(Integer restaurantId) {
 		List<FoodItem> foodItemsList= fetchFoodItemList(restaurantId);
-		 Restaurant restaurant= fetchRestaurantDetailsFromRestaurantMS(restaurantId);
+		// Restaurant restaurant= fetchRestaurantDetailsFromRestaurantMS(restaurantId);
+		//Restaurant restaurant = feignClientServer.fetchRestaurantDetailsFromRestaurantMS(restaurantId);
+		
+		Restaurant restaurant = commonService.fetchRestaurantDetailsFromRestaurantMS(restaurantId);
 		 return createFoodCataloguePage(foodItemsList,restaurant);
 		 
 		 
@@ -67,10 +77,7 @@ public class FoodItemServiceImpl implements FoodItemService {
 		
 	}
 	
-	private Restaurant fetchRestaurantDetailsFromRestaurantMS(Integer restaurantID)
-	{
-		return restTemplate.getForObject("http://RESTAURANT-SERVICE/restaurant/fetchById/"+restaurantID, Restaurant.class);
-	}
+	
 
 	private List<FoodItem> fetchFoodItemList(Integer restaurantId)
 	{

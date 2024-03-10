@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/foodItem")
 @CrossOrigin(origins = "http://localhost:4200")
+
 public class FoodItemController {
 	
 	
